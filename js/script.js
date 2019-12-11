@@ -8,6 +8,23 @@ const studentPage = document.querySelector('.page');
 
 
 
+// Add search bar to page
+const makeSearchBar = () => {
+   const header = document.querySelector('.page-header');
+   const studentSearch = document.createElement('div');
+   const searchContent = 
+   `
+   <input placeholder="Search for students...">
+   <button>Search</button>
+   `;
+
+   header.appendChild(studentSearch);
+   studentSearch.classList.add('student-search');
+   studentSearch.innerHTML = searchContent;
+}
+
+makeSearchBar();
+
 // Shows list of 10 students as a "page"
 const showPage = (list, page) => {
    let startIndex = (studentsPerPage * page) - studentsPerPage;
