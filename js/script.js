@@ -14,7 +14,7 @@ const makeSearchBar = () => {
    const studentSearch = document.createElement('div');
    const searchContent = 
    `
-   <input placeholder="Search for students...">
+   <input id="searchBar" placeholder="Search for students...">
    <button>Search</button>
    `;
 
@@ -88,3 +88,25 @@ linkDiv.addEventListener('click', e => {
       }   
    }
 });
+
+
+const searchBar = document.querySelector('#searchBar');
+
+const searchFunction = () => {
+   let searchValue = searchBar.value.toLowerCase();
+   let studentUL = document.querySelector('.student-list');
+   let studentLI = studentUL.querySelectorAll('li');
+   for (i = 0; i < studentLI.length; i++) {
+      let h3 = studentLI[i].querySelector('h3');
+      let name = h3.textContent;
+      if (name.toLowerCase().indexOf(searchValue) > -1) {
+         studentLI[i].style.display = '';
+      } else {
+         studentLI[i].style.display = 'none';
+      }
+   }
+}
+
+searchBar.addEventListener('keyup', (e) => searchFunction());
+
+searchBar.addEventListener('keydown', (e) => showPage(studentList, 1))
