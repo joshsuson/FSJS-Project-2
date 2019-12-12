@@ -8,6 +8,7 @@ const studentPage = document.querySelector('.page');
 
 
 
+
 // Add search bar to page
 const makeSearchBar = () => {
    const header = document.querySelector('.page-header');
@@ -39,21 +40,22 @@ const showPage = (list, page) => {
 
 // Adds "page" links to bottom of page so you can click through students
 const appendPageLinks = list => {
-   const createElement = type => {
-      const element = document.createElement(type);
-      return element;
+   
+   let linkCheck = document.querySelector('.pagination');
+   if (linkCheck !== null) {
+      linkCheck.remove();
    }
-
+   
    const numberOfPages = Math.ceil(list.length / studentsPerPage);
-   const linkDiv = createElement('div');
+   const linkDiv = document.createElement('div');
    linkDiv.classList.add('pagination');
-   const linkUL = createElement('ul');
+   const linkUL = document.createElement('ul');
    studentPage.appendChild(linkDiv);
    linkDiv.appendChild(linkUL);
 
    for(i = 0; i < numberOfPages; i++) {
-      const li = createElement('li');
-      const a = createElement('a');
+      const li = document.createElement('li');
+      const a = document.createElement('a');
 
       if (i === 0) {
          a.classList.add('active');
@@ -69,14 +71,11 @@ const appendPageLinks = list => {
 showPage(studentList, 1);
 appendPageLinks(studentList);
 
-
-// Event Listener to make "page" links work
-const linkDiv = document.querySelector('.pagination');
-linkDiv.addEventListener('click', e => {
-   let button = e.target;
+const linkButtons = (event, list) => {
+   let button = event.target;
    if (button.nodeName.toLowerCase() === 'a') {
       let activePage = parseInt(button.textContent);
-      showPage(studentList, activePage);
+      showPage(list, activePage);
       if (!button.classList.contains('active')) {
          button.classList.add('active');
       }
@@ -87,26 +86,67 @@ linkDiv.addEventListener('click', e => {
          }
       }   
    }
-});
+}
+
+
+// Event Listener to make "page" links work
+let linkDiv = document.querySelector('.pagination');
+linkDiv.addEventListener('click', e => linkButtons(e, studentList));
 
 
 const searchBar = document.querySelector('#searchBar');
+const searchDiv = document.querySelector('.student-search');
+let searchLinks;
+let masterList;
 
 const searchFunction = () => {
    let searchValue = searchBar.value.toLowerCase();
    let studentUL = document.querySelector('.student-list');
    let studentLI = studentUL.querySelectorAll('li');
+   let searchList = [];
    for (i = 0; i < studentLI.length; i++) {
+      studentLI[i].style.display = 'none';
       let h3 = studentLI[i].querySelector('h3');
       let name = h3.textContent;
-      if (name.toLowerCase().indexOf(searchValue) > -1) {
-         studentLI[i].style.display = '';
-      } else {
-         studentLI[i].style.display = 'none';
-      }
+      if (name.toLowerCase().includes(searchValue)) {
+         searchList.push(studentLI[i]);
+      } 
    }
+   // let noResults;
+   if (searchList.length === 0) {
+      let noResults = document.createElement('div');
+      noResults.id = 'noResults';
+      noResults.innerHTML = `<p>I'm sorry there were no results for that search. Please search someone else.</p>`
+      studentPage.appendChild(noResults);
+      if (typeof searchLinks === 'object') {
+         searchLinks.remove();
+      } else {
+         linkDiv.remove();
+      } 
+   } else {
+      let noResults = document.querySelector('#noResults');
+      if (noResults !== null) {
+         noResults.remove();
+      }
+      showPage(searchList, 1);
+      appendPageLinks(searchList);
+      let linkClass = document.querySelector('.pagination');
+      linkClass.id = 'searchLinks';
+      searchLinks = document.querySelector('#searchLinks');
+      masterList = searchList;
+   }  
 }
 
-searchBar.addEventListener('keyup', (e) => searchFunction());
+studentPage.addEventListener('click', e => {
+   if (typeof searchLinks !== 'undefined') {
+      linkButtons(e, masterList);
+   }
+});
 
-searchBar.addEventListener('keydown', (e) => showPage(studentList, 1))
+
+searchDiv.addEventListener('click', e => {
+   let searchButton = searchDiv.querySelector('button');
+   if (e.target === searchButton) {
+      searchFunction();
+   }
+});
