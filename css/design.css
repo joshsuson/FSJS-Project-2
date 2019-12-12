@@ -118,3 +118,12 @@ body{
       color: #fff;
       cursor: pointer;
     }
+
+    #noResults {
+      font-weight: 400;
+      text-align: center;
+      margin: 15px;
+      padding: 30px;
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
